@@ -394,7 +394,7 @@ If you are developing a production application, we recommend using TypeScript wi
 .user-msg { justify-content: flex-end; }
 .bubble { max-width: 80%; padding: 15px; border-radius: 20px; line-height: 1.5; }
 .user-bubble { background: #2b2c2f; }
-.maya-bubble { background: transparent; font-size: 1.1rem; }
+.lumina-ai-bubble { background: transparent; font-size: 1.1rem; }
 
 .shimmer-line {
   height: 12px;
@@ -667,14 +667,14 @@ function App() {
   /* -------------------- MULTI CHAT STATE -------------------- */
 
   const [chats, setChats] = useState(() => {
-  const saved = localStorage.getItem("maya_chats");
+  const saved = localStorage.getItem("Lumina_chats");
   return saved
     ? JSON.parse(saved)
     : [{ id: 1, title: "New Chat", messages: [] }];
 });
 
 const [activeChatId, setActiveChatId] = useState(() => {
-  const savedActive = localStorage.getItem("maya_active_chat");
+  const savedActive = localStorage.getItem("Lumina_active_chat");
   return savedActive ? JSON.parse(savedActive) : 1;
 });
 
@@ -744,7 +744,7 @@ useEffect(() => {
       }
 
       setTimeout(() => {
-        /* ---- Add MAYA reply to active chat ---- */
+        /* ---- Add Lumina AI reply to active chat ---- */
         setChats(prev =>
           prev.map(chat =>
             chat.id === activeChatId
@@ -753,7 +753,7 @@ useEffect(() => {
                   messages: [
                     ...chat.messages,
                     {
-                      role: "maya",
+                      role: "Lumina",
                       content: data.reply || data.response,
                       source: data.source
                     }
@@ -769,7 +769,7 @@ useEffect(() => {
       }, 800);
 
     } catch (error) {
-      console.error("Maya Offline", error);
+      console.error("Lumina Offline", error);
       setLoading(false);
     }
   };
@@ -976,7 +976,7 @@ const WelcomeScreen = () => {
   return (
     <div className="text-center mt-20 text-slate-400">
       <h1 className="text-3xl font-bold text-white">Welcome.</h1>
-      <p className="mt-2">Ask Maya anything.</p>
+      <p className="mt-2">Ask Lumina anything.</p>
     </div>
   );
 };
@@ -1034,7 +1034,7 @@ const InputBar = ({
 
         <input
           className="flex-1 bg-transparent outline-none px-3"
-          placeholder="Ask Maya anything..."
+          placeholder="Ask Lumina anything..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
@@ -1220,7 +1220,7 @@ const Header = () => {
   return (
     <header className="w-full p-4 border-b border-white/10 backdrop-blur-md bg-slate-900/60">
       <h1 className="text-lg font-semibold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-        MAYA AI • LIVE AGENT
+        LUMINA AI • LIVE AGENT
       </h1>
     </header>
   );
@@ -1385,7 +1385,7 @@ SOFTWARE.
 </file>
 
 <file path="README.md">
-# Maya-AI
+# Lumina-AI
 
 Minimal instructions to run the backend and frontend locally.
 
@@ -1437,7 +1437,7 @@ If you want, I can push these commits to your GitHub remote or add a more detail
 
 <file path="start_maya.bat">
 @echo off
-echo Starting Maya AI Stack...
+echo Starting Lumina AI Stack...
 
 :: Start Backend
 start cmd /k "cd backend && python main.py"
@@ -1445,7 +1445,7 @@ start cmd /k "cd backend && python main.py"
 :: Start Frontend
 start cmd /k "cd frontend && npm run dev"
 
-echo Maya is warming up. Check the new windows for status!
+echo Lumina AI is warming up. Check the new windows for status!
 </file>
 
 </files>

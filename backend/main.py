@@ -47,7 +47,7 @@ def init_db():
     cursor.execute('CREATE TABLE IF NOT EXISTS profile (key TEXT PRIMARY KEY, value TEXT)')
     cursor.execute('CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY AUTOINCREMENT, role TEXT, content TEXT)')
     cursor.execute("INSERT OR IGNORE INTO profile (key, value) VALUES ('name', 'Suhash')")
-    cursor.execute("INSERT OR IGNORE INTO profile (key, value) VALUES ('role', 'Lead Developer @ Maya Agentic')")
+    cursor.execute("INSERT OR IGNORE INTO profile (key, value) VALUES ('role', 'Lead Developer @ Lumina AI Agentic')")
     cursor.execute("INSERT OR IGNORE INTO profile (key, value) VALUES ('tech', 'C++, React, FastAPI, Ollama')")
     conn.commit()
     conn.close()
@@ -88,7 +88,7 @@ async def favicon():
 
 @app.get("/")
 async def health_check():
-    return {"status": "Maya Backend is Live on 8080"}
+    return {"status": "Lumina Backend is Live on 8080"}
 
 @app.post("/chat")
 async def chat(input_data: ChatInput):
@@ -115,7 +115,7 @@ async def chat(input_data: ChatInput):
     user_name = cursor.fetchone()[0]
 
     system_prompt = f"""<system_instructions>
-You are MAYA, a highly advanced, omni-capable AI assistant. Your architecture is designed to provide flawless, expert-level answers to ANY question the user asks.
+You are Lumina AI, a highly advanced, omni-capable AI assistant. Your architecture is designed to provide flawless, expert-level answers to ANY question the user asks.
 
 [SYSTEM CONTEXT]
 User Name: {user_name}
@@ -200,7 +200,18 @@ If the image is low quality, state exactly which parts are illegible rather than
 
     try:
         steps.append({"id": 3, "status": "Analyzing request...", "icon": "🔍"})
-        ai_msg = await active_llm.ainvoke(messages)
+        try:
+            ai_msg = await active_llm.ainvoke(messages)
+        except Exception as e:
+            if image_b64 and ("not found" in str(e).lower() or "404" in str(e)):
+                logging.warning(f"llama3.2-vision not found, falling back to text-only llama3.2: {e}")
+                steps.append({"id": 3, "status": "Vision model not found, falling back to text...", "icon": "⚠️"})
+                active_llm = llm
+                messages = [SystemMessage(content=system_prompt), HumanMessage(content=user_message)]
+                ai_msg = await active_llm.ainvoke(messages)
+                ai_msg.content = "⚠️ *Image analysis is currently unavailable because the vision model ('llama3.2-vision') is not installed on your system. I am responding using text-only context.*\n\n" + ai_msg.content
+            else:
+                raise e
         messages.append(ai_msg)
 
         if hasattr(ai_msg, 'tool_calls') and ai_msg.tool_calls:
@@ -223,7 +234,7 @@ If the image is low quality, state exactly which parts are illegible rather than
         conn.close()
         
         # Save to Chroma Vector DB inside the endpoint logic!
-        add_to_long_term_memory(f"User Asked: {user_message}\nMaya Answered: {ai_msg.content}")
+        add_to_long_term_memory(f"User Asked: {user_message}\nLumina AI Answered: {ai_msg.content}")
         
         return {"reply": str(ai_msg.content), "steps": steps}
 

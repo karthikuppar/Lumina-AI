@@ -4,7 +4,7 @@ ollama
 duckduckgo-search
 langchain-ollama 
 langchain-community 
-pydantic==2.10.6
+pydantic>=2.13.4
 langchain-tavily
 langchain-chroma 
 chromadb

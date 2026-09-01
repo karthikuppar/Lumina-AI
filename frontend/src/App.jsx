@@ -25,14 +25,14 @@ function App() {
   /* -------------------- MULTI CHAT STATE -------------------- */
 
   const [chats, setChats] = useState(() => {
-  const saved = localStorage.getItem("maya_chats");
+  const saved = localStorage.getItem("Lumina_chats");
   return saved
     ? JSON.parse(saved)
     : [{ id: 1, title: "New Chat", messages: [] }];
 });
 
 const [activeChatId, setActiveChatId] = useState(() => {
-  const savedActive = localStorage.getItem("maya_active_chat");
+  const savedActive = localStorage.getItem("Lumina_active_chat");
   return savedActive ? JSON.parse(savedActive) : 1;
 });
 
@@ -102,7 +102,7 @@ useEffect(() => {
       }
 
       setTimeout(() => {
-        /* ---- Add MAYA reply to active chat ---- */
+        /* ---- Add Lumina AI reply to active chat ---- */
         setChats(prev =>
           prev.map(chat =>
             chat.id === activeChatId
@@ -111,7 +111,7 @@ useEffect(() => {
                   messages: [
                     ...chat.messages,
                     {
-                      role: "maya",
+                      role: "Lumina",
                       content: data.reply || data.response,
                       source: data.source
                     }
@@ -127,7 +127,7 @@ useEffect(() => {
       }, 800);
 
     } catch (error) {
-      console.error("Maya Offline", error);
+      console.error("Lumina Offline", error);
       setLoading(false);
     }
   };

@@ -32,7 +32,7 @@ const InputBar = ({
 
         <input
           className="flex-1 bg-transparent outline-none px-3"
-          placeholder="Ask Maya anything..."
+          placeholder="Ask Lumina anything..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}

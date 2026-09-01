@@ -6,7 +6,7 @@
 
 using namespace std;
 
-// Minimalist sentiment analysis for Maya's "Vibe" check
+// Minimalist sentiment analysis for Lumina AI's "Vibe" check
 string analyzeVibe(string prompt) {
   transform(prompt.begin(), prompt.end(), prompt.begin(), ::tolower);
     if (prompt.find("happy") != string::npos || prompt.find("great") != string::npos) return "Positive";

@@ -1,4 +1,4 @@
-# Maya-AI
+# Lumina Ai
 
 Minimal instructions to run the backend and frontend locally.
 
@@ -44,5 +44,3 @@ The frontend dev server typically runs at `http://localhost:5173` and is configu
 ## Notes
 - The backend uses `langchain_ollama` — if you do not have Ollama, remove or adapt the usage in `backend/main.py`.
 - A local SQLite file `backend/memory.db` is used for simple persistence and is ignored by `.gitignore`.
-
-If you want, I can push these commits to your GitHub remote or add a more detailed developer guide.
