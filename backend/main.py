@@ -26,7 +26,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-os.environ["TAVILY_API_KEY"] = os.getenv("TAVILY_API_KEY", "your-tavily-api-key-here")
+os.environ["TAVILY_API_KEY"] = os.getenv("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", "your-tavily-api-key-here")
 
 search_tool = TavilySearch(
     max_results=3, 
@@ -34,7 +34,10 @@ search_tool = TavilySearch(
     include_answer=True 
 )
 
-UPLOAD_DIR = "uploads"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "memory.db")
+CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
+UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 class ChatInput(BaseModel):
@@ -42,20 +45,20 @@ class ChatInput(BaseModel):
     image: Optional[str] = None
 
 def init_db():
-    conn = sqlite3.connect('memory.db')
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute('CREATE TABLE IF NOT EXISTS profile (key TEXT PRIMARY KEY, value TEXT)')
     cursor.execute('CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY AUTOINCREMENT, role TEXT, content TEXT)')
-    cursor.execute("INSERT OR IGNORE INTO profile (key, value) VALUES ('name', 'Suhash')")
-    cursor.execute("INSERT OR IGNORE INTO profile (key, value) VALUES ('role', 'Lead Developer @ Lumina AI Agentic')")
-    cursor.execute("INSERT OR IGNORE INTO profile (key, value) VALUES ('tech', 'C++, React, FastAPI, Ollama')")
+    cursor.execute("INSERT OR REPLACE INTO profile (key, value) VALUES ('name', 'karthik')")
+    cursor.execute("INSERT OR REPLACE INTO profile (key, value) VALUES ('role', 'Lead Developer @ Lumina AI Agentic')")
+    cursor.execute("INSERT OR REPLACE INTO profile (key, value) VALUES ('tech', 'C++, React, FastAPI, Ollama')")
     conn.commit()
     conn.close()
 
 init_db()
 
 embeddings = OllamaEmbeddings(model="nomic-embed-text")
-vector_db = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
+vector_db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
 
 def add_to_long_term_memory(text: str):
     """Indexes a new interaction into the vector database"""
@@ -75,9 +78,9 @@ def get_cpp_intelligence(query_key: str):
     try:
         # Check OS: Use .exe for Windows, no extension for Linux
         ext = ".exe" if platform.system() == "Windows" else ""
-        exe_path = os.path.join("engine", f"search_engine{ext}") 
+        exe_path = os.path.join(BASE_DIR, "engine", f"search_engine{ext}") 
         
-        result = subprocess.run([exe_path, query_key], capture_output=True, text=True, encoding='utf-8', timeout=5)
+        result = subprocess.run([exe_path, query_key], capture_output=True, text=True, encoding='utf-8', timeout=5, cwd=os.path.join(BASE_DIR, "engine"))
         return result.stdout.strip()
     except Exception as e:
         return f"No data found. | User mood is NEUTRAL. Error: {e}"
@@ -109,7 +112,7 @@ async def chat(input_data: ChatInput):
     local_fact = parts[0]
     user_mood = parts[1] if len(parts) > 1 else "NEUTRAL"
     
-    conn = sqlite3.connect('memory.db')
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT value FROM profile WHERE key='name'")
     user_name = cursor.fetchone()[0]
@@ -253,4 +256,8 @@ async def upload_file(file: UploadFile = File(...)):
     return {"filename": file.filename, "status": "File indexed for analysis"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8080)
+    uvicorn.run(
+        app,
+        host="127.0.0.1",
+        port=8080
+    )
